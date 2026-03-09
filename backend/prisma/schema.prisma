@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+}
+
+model ServiceCategory {
+  id          String   @id @default(cuid())
+  name        String
+  color       String
+  icon        String
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  subServices SubService[]
+}
+
+model SubService {
+  id               String   @id @default(cuid())
+  categoryId       String   @map("category_id")
+  category         ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name             String
+  shortDescription String   @map("short_description")
+  fullDescription  String   @map("full_description")
+  features         Json     @default("[]")
+  benefits         Json     @default("[]")
+  icon             String?
+  image            String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  packages         Package[]
+
+  @@index([categoryId])
+}
+
+model Package {
+  id           String    @id @default(cuid())
+  serviceId    String    @map("service_id")
+  service      SubService @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  name         String
+  description  String
+  features     Json      @default("[]")
+  price        String
+  displayPrice Boolean   @default(true) @map("display_price")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@index([serviceId])
+}
+
+model Job {
+  id           String   @id @default(cuid())
+  title        String
+  organization String
+  deadline     DateTime
+  location     String
+  type         String
+  description  String
+  requirements Json     @default("[]")
+  externalLink String?  @map("external_link")
+  status       String   @default("active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+}
+
+model Scholarship {
+  id           String   @id @default(cuid())
+  title        String
+  organization String
+  deadline     DateTime
+  country      String
+  level        String
+  description  String
+  eligibility  Json     @default("[]")
+  benefits     Json     @default("[]")
+  externalLink String?  @map("external_link")
+  status       String   @default("active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+}
+
+model FormSubmission {
+  id               String   @id @default(cuid())
+  type             String
+  servicePackageId String?  @map("service_package_id")
+  jobId            String?  @map("job_id")
+  scholarshipId    String?  @map("scholarship_id")
+  fullName         String   @map("full_name")
+  phone            String
+  email            String
+  message          String?
+  files            Json     @default("[]")
+  submittedAt      DateTime @default(now()) @map("submitted_at")
+  status           String   @default("pending")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+}
+
+model Settings {
+  id           String   @id @default(cuid())
+  siteName     String   @default("NextStep.xyz") @map("site_name")
+  contactEmail String   @default("") @map("contact_email")
+  contactPhone String   @default("") @map("contact_phone")
+  address      String   @default("")
+  facebook     String   @default("")
+  twitter      String   @default("")
+  linkedin     String   @default("")
+  instagram    String   @default("")
+  whatsapp     String   @default("")
+  aboutText    String   @default("") @map("about_text")
+  footerText   String   @default("") @map("footer_text")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+}
