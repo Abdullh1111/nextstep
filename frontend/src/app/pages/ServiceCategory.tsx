@@ -1,13 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { serviceCategories } from '../data/mockData';
 
 export function ServiceCategory() {
   const { categoryId } = useParams();
-  const { subServices } = useApp();
+  const { categories, subServices } = useApp();
   
-  const category = serviceCategories.find(c => c.id === categoryId);
+  const category = categories.find(c => c.id === categoryId);
   const services = subServices.filter(s => s.categoryId === categoryId);
 
   if (!category) {

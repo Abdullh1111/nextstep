@@ -1,53 +1,28 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Users, Award, Globe, Briefcase, GraduationCap, Plane, MapPin, Calendar, Building2, DollarSign } from 'lucide-react';
-import { serviceCategories } from '../data/mockData';
-import { useState, useEffect } from 'react';
-import { jobsAPI, scholarshipsAPI } from '../utils/api';
+import { useMemo } from 'react';
+import { useApp } from '../context/AppContext';
 
 export function Home() {
-  const [latestJobs, setLatestJobs] = useState<any[]>([]);
-  const [latestScholarships, setLatestScholarships] = useState<any[]>([]);
-  const [loadingJobs, setLoadingJobs] = useState(true);
-  const [loadingScholarships, setLoadingScholarships] = useState(true);
+  const { categories, jobs, scholarships, loading } = useApp();
 
-  useEffect(() => {
-    // Fetch latest jobs
-    const fetchJobs = async () => {
-      try {
-        const jobs = await jobsAPI.getAll();
-        // Filter active jobs and get latest 3
-        const activeJobs = jobs
-          .filter((job: any) => job.status === 'active')
-          .sort((a: any, b: any) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime())
-          .slice(0, 3);
-        setLatestJobs(activeJobs);
-      } catch (error) {
-        console.error('Error fetching jobs:', error);
-      } finally {
-        setLoadingJobs(false);
-      }
-    };
+  const latestJobs = useMemo(
+    () =>
+      jobs
+        .filter((job: any) => job.status === 'active')
+        .sort((a: any, b: any) => new Date(b.updatedAt ?? b.deadline ?? 0).getTime() - new Date(a.updatedAt ?? a.deadline ?? 0).getTime())
+        .slice(0, 3),
+    [jobs]
+  );
 
-    // Fetch latest scholarships
-    const fetchScholarships = async () => {
-      try {
-        const scholarships = await scholarshipsAPI.getAll();
-        // Filter active scholarships and get latest 3
-        const activeScholarships = scholarships
-          .filter((scholarship: any) => scholarship.status === 'active')
-          .sort((a: any, b: any) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime())
-          .slice(0, 3);
-        setLatestScholarships(activeScholarships);
-      } catch (error) {
-        console.error('Error fetching scholarships:', error);
-      } finally {
-        setLoadingScholarships(false);
-      }
-    };
-
-    fetchJobs();
-    fetchScholarships();
-  }, []);
+  const latestScholarships = useMemo(
+    () =>
+      scholarships
+        .filter((scholarship: any) => scholarship.status === 'active')
+        .sort((a: any, b: any) => new Date(b.updatedAt ?? b.deadline ?? 0).getTime() - new Date(a.updatedAt ?? a.deadline ?? 0).getTime())
+        .slice(0, 3),
+    [scholarships]
+  );
 
   const iconMap: { [key: string]: any } = {
     Briefcase,
@@ -136,7 +111,7 @@ export function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {serviceCategories.map(category => {
+            {categories.map(category => {
               const Icon = iconMap[category.icon] || Globe;
               return (
                 <Link
@@ -184,7 +159,7 @@ export function Home() {
             </Link>
           </div>
 
-          {loadingJobs ? (
+          {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-gray-50 rounded-xl p-6 animate-pulse">
@@ -285,7 +260,7 @@ export function Home() {
             </Link>
           </div>
 
-          {loadingScholarships ? (
+          {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-white rounded-xl p-6 animate-pulse">

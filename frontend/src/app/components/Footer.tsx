@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
-import { serviceCategories } from '../data/mockData';
+import { useApp } from '../context/AppContext';
 
 export function Footer() {
+  const { categories } = useApp();
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-12">
@@ -33,7 +35,7 @@ export function Footer() {
           <div>
             <h3 className="text-white mb-4">Services</h3>
             <ul className="space-y-2 text-sm">
-              {serviceCategories.map(category => (
+              {categories.map(category => (
                 <li key={category.id}>
                   <Link
                     to={`/services/${category.id}`}

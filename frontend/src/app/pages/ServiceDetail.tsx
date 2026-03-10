@@ -1,16 +1,15 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Check, ArrowRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { serviceCategories } from '../data/mockData';
 
 export function ServiceDetail() {
   const { serviceId } = useParams();
   const navigate = useNavigate();
-  const { subServices, packages } = useApp();
+  const { categories, subServices, packages } = useApp();
   
   const service = subServices.find(s => s.id === serviceId);
   const servicePackages = packages.filter(p => p.serviceId === serviceId);
-  const category = serviceCategories.find(c => c.id === service?.categoryId);
+  const category = categories.find(c => c.id === service?.categoryId);
 
   if (!service) {
     return <div className="container mx-auto px-4 py-12">Service not found</div>;

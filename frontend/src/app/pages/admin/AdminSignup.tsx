@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, Mail, Lock, User } from 'lucide-react';
-import { authAPI } from '../../utils/api';
 import { toast } from 'sonner';
+import { useSignupMutation } from '../../services/nextstepApi';
 
 export function AdminSignup() {
   const [name, setName] = useState('');
@@ -11,6 +11,7 @@ export function AdminSignup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [signup] = useSignupMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +29,7 @@ export function AdminSignup() {
     setLoading(true);
     
     try {
-      await authAPI.signup(email, password, name);
+      await signup({ email, password, name }).unwrap();
       toast.success('Admin account created successfully! You can now login.');
       setTimeout(() => {
         navigate('/admin/login');

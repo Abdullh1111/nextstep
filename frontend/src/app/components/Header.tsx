@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
-import { serviceCategories } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
-  const { subServices } = useApp();
+  const { categories, subServices } = useApp();
 
   const getServicesByCategory = (categoryId: string) => {
     return subServices.filter(s => s.categoryId === categoryId);
@@ -50,7 +49,7 @@ export function Header() {
               {isServicesOpen && (
                 <div className="absolute left-0 mt-2 w-screen max-w-5xl -ml-96 bg-white shadow-2xl rounded-lg p-8 border border-gray-100">
                   <div className="grid grid-cols-2 gap-8">
-                    {serviceCategories.map(category => (
+                    {categories.map(category => (
                       <div key={category.id}>
                         <Link
                           to={`/services/${category.id}`}
@@ -151,7 +150,7 @@ export function Header() {
             {/* Mobile Services */}
             <div className="border-t pt-3">
               <p className="text-gray-500 mb-2">Our Services</p>
-              {serviceCategories.map(category => (
+              {categories.map(category => (
                 <Link
                   key={category.id}
                   to={`/services/${category.id}`}
